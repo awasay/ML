@@ -71,19 +71,6 @@ def get_unique_calls(start_index, end_index, direc="train"):
                 CALLS[call]=1
             else:
                 CALLS[call]+=1
-
-def refine_calls(top):
-    if top >= len(CALLS):
-        top = len(CALLS)
-    a = np.argsort(CALLS.values())
-    top_indices = [a[len(a)-top:len(a)]]
-    top_calls = np.take(CALLS.keys(),top_indices)
-    
-    CALLS.clear()
-
-    for tc in top_calls[0]:
-        CALLS[tc]=0
-
         
 
 def create_data_matrix(start_index, end_index, direc="train"):
@@ -148,6 +135,28 @@ def call_feats(tree):
             call_feat_array[i] = call_counter[call]
     return call_feat_array
 
+# Wasay: Tests the accuracy of the prediction on validation data set. 
+
+def get_accuracy(prediction,actual):
+    assert(len(prediction)==len(actual))
+    
+    correct = 1.0*np.count_nonzero(prediction==actual)
+    total = 1.0*(len(prediction))
+    
+    print "The accuracy is: "+str(correct/total)
+    return correct/total
+
+# Wasay: When you have test_ids and predictions, this function writes them to 
+## result.csv in the required format.
+
+def write_predictions(test_ids,prediction):
+    assert(len(prediction)==len(test_ids))
+    
+    writer = csv.writer(open("../result.csv",'wb'))
+    
+    writer.writerow(["Id","Prediction"])
+    for i in range(0,len(test_ids)):
+        writer.writerow([test_ids[i],prediction[i]])
 
 ## Feature extraction
 def main():
@@ -160,9 +169,7 @@ def main():
     #### and cross validate on the other. We print the accuracy.
 
     get_unique_calls(0, 5000, TRAIN_DIR)
-    refine_calls(200)
-    print len(CALLS)
-    
+
     if not predict:
         X_train, t_train, train_ids = create_data_matrix(0, 1500, TRAIN_DIR)
         X_valid, t_valid, valid_ids = create_data_matrix(1500, 5000, TRAIN_DIR)
@@ -172,9 +179,16 @@ def main():
         print 'Classes (training set):'
         print t_train.shape
 
-        import models
-        models.LSVM(X_train,t_train,X_valid,t_valid,False)
+        from sklearn import linear_model
+        # From here, you can train models (eg by importing sklearn and inputting X_train, t_train).
+        
+        # Logistic Regression
 
+        logreg = linear_model.LogisticRegression()
+        logreg.fit(X_train, t_train)
+        prediction = logreg.predict(X_valid)
+
+        get_accuracy(prediction,t_valid)
     else:
         X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
         X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
@@ -184,9 +198,16 @@ def main():
         print 'Classes (training set):'
         print t_train.shape
 
-        import models
-        models.LSVM(X_train,t_train,X_test,test_ids,True)
+        from sklearn import linear_model
+        # From here, you can train models (eg by importing sklearn and inputting X_train, t_train).
         
+        # Logistic Regression
+
+        logreg = linear_model.LogisticRegression()
+        logreg.fit(X_train, t_train)
+        prediction = logreg.predict(X_test)
+
+        write_predictions(test_ids,prediction)
 
 if __name__ == "__main__":
     main()
