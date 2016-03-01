@@ -154,6 +154,7 @@ def main():
 
     ##
     predict = True
+    cross_validate = True
     # Wasay: When predict is true, we use the test data set and make actual 
     ## predictions and write them down to result.csv. When predict is false, 
     ### we divide the train data set into two halves and train on one half 
@@ -163,7 +164,7 @@ def main():
     refine_calls(200)
     print len(CALLS)
     
-    if not predict:
+    if cross_validate:
         X_train, t_train, train_ids = create_data_matrix(0, 1500, TRAIN_DIR)
         X_valid, t_valid, valid_ids = create_data_matrix(1500, 5000, TRAIN_DIR)
 
@@ -173,9 +174,9 @@ def main():
         print t_train.shape
 
         import models
-        models.LSVM(X_train,t_train,X_valid,t_valid,False)
+        models.NN(X_train,t_train,X_valid,t_valid,False)
 
-    else:
+    if predict:
         X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
         X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
 
@@ -185,7 +186,7 @@ def main():
         print t_train.shape
 
         import models
-        models.LSVM(X_train,t_train,X_test,test_ids,True)
+        models.NN(X_train,t_train,X_test,test_ids,True)
         
 
 if __name__ == "__main__":

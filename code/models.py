@@ -1,5 +1,7 @@
 from sklearn import linear_model
 from sklearn.svm import SVC
+from sknn.mlp import Classifier, Layer
+from sklearn.ensemble import ExtraTreesClassifier
 import numpy as np
 import csv
 
@@ -52,6 +54,20 @@ def LSVM(X_train,t_train,x,t,predict):
 
 	svc.fit(X_train, t_train)
 	prediction = svc.predict(x)
+
+	if predict:
+		write_predictions(t,prediction)
+	else:
+		get_accuracy(prediction,t)
+
+## Neural Network
+
+def NN(X_train,t_train,x,t,predict):
+
+	clf = ExtraTreesClassifier(n_estimators=500, max_depth=None)
+
+	clf.fit(X_train, t_train)
+	prediction = clf.predict(x)
 
 	if predict:
 		write_predictions(t,prediction)
