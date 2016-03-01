@@ -62,7 +62,7 @@ def LSVM(X_train,t_train,x,t,predict):
 
 ## Neural Network
 
-def NN(X_train,t_train,x,t,predict):
+def EXRT(X_train,t_train,x,t,predict):
 
 	clf = ExtraTreesClassifier(n_estimators=500, max_depth=None)
 

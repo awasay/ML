@@ -174,7 +174,7 @@ def main():
         print t_train.shape
 
         import models
-        models.NN(X_train,t_train,X_valid,t_valid,False)
+        models.EXRT(X_train,t_train,X_valid,t_valid,False)
 
     if predict:
         X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
@@ -186,7 +186,7 @@ def main():
         print t_train.shape
 
         import models
-        models.NN(X_train,t_train,X_test,test_ids,True)
+        models.EXRT(X_train,t_train,X_test,test_ids,True)
         
 
 if __name__ == "__main__":
