@@ -21,6 +21,9 @@ def get_accuracy(prediction,actual):
 
 def write_predictions(test_ids,prediction):
     assert(len(prediction)==len(test_ids))
+
+    print prediction
+    print test_ids
     
     writer = csv.writer(open("../result.csv",'wb'))
     

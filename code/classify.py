@@ -15,6 +15,7 @@ except ImportError:
 import numpy as np
 from scipy import sparse
 import csv
+import pandas as pd
 
 import util
 
@@ -126,6 +127,7 @@ def create_data_matrix(start_index, end_index, direc="train"):
 
     return X, np.array(classes), ids
 
+
 # Wasay: This is the function that you can augment to extract other features:
 
 def call_feats(tree):
@@ -148,25 +150,36 @@ def call_feats(tree):
             call_feat_array[i] = call_counter[call]
     return call_feat_array
 
+def getFeatures(filename,start,end,_start,_end):
+    f = pd.read_csv(filename)
+    #print f.ix[start:end,_start:_end]
+    return f.ix[start:end,_start:_end]
+
 
 ## Feature extraction
 def main():
-
+    #print np.array(getFeatures("../features/SCfeatures_train.csv",0,1499,120,121)).T[0]
+    #exit()
     ##
     predict = True
-    cross_validate = True
+    cross_validate = False
     # Wasay: When predict is true, we use the test data set and make actual 
     ## predictions and write them down to result.csv. When predict is false, 
     ### we divide the train data set into two halves and train on one half 
     #### and cross validate on the other. We print the accuracy.
 
-    get_unique_calls(0, 5000, TRAIN_DIR)
-    refine_calls(200)
-    print len(CALLS)
+    #get_unique_calls(0, 5000, TRAIN_DIR)
+    #refine_calls(200)
+    #print len(CALLS)
     
     if cross_validate:
         X_train, t_train, train_ids = create_data_matrix(0, 1500, TRAIN_DIR)
         X_valid, t_valid, valid_ids = create_data_matrix(1500, 5000, TRAIN_DIR)
+
+        X_train = getFeatures("../features/SCfeatures_train.csv",0,1499,0,120)
+        X_valid = getFeatures("../features/SCfeatures_train.csv",1500,5000,0,120)
+        t_train = np.array(getFeatures("../features/SCfeatures_train.csv",0,1499,120,121)).T[0]
+        t_valid = np.array(getFeatures("../features/SCfeatures_train.csv",1500,5000,120,121)).T[0]
 
         print 'Data matrix (training set):'
         print X_train.shape
@@ -177,13 +190,22 @@ def main():
         models.EXRT(X_train,t_train,X_valid,t_valid,False)
 
     if predict:
-        X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
-        X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
+        print
+        #X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
+        #X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
+
+        t_train = getFeatures("../features/t_train.csv",0,5000,0,1)
+        X_train = getFeatures("../features/X_train.csv",0,5000,0,120)
+        X_test = getFeatures("../features/X_test.csv",0,5000,0,120)
+        test_ids = np.array(getFeatures("../features/test_ids.csv",0,5000,0,1)).T[0]
 
         print 'Data matrix (training set):'
         print X_train.shape
-        print 'Classes (training set):'
         print t_train.shape
+        print X_test.shape
+        print test_ids.shape
+        #print 'Classes (training set):'
+        #print t_train.shape
 
         import models
         models.EXRT(X_train,t_train,X_test,test_ids,True)
