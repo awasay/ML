@@ -162,7 +162,7 @@ def main():
     #exit()
     ##
     predict = True
-    cross_validate = False
+    cross_validate = True
     # Wasay: When predict is true, we use the test data set and make actual 
     ## predictions and write them down to result.csv. When predict is false, 
     ### we divide the train data set into two halves and train on one half 
@@ -176,34 +176,31 @@ def main():
         X_train, t_train, train_ids = create_data_matrix(0, 1500, TRAIN_DIR)
         X_valid, t_valid, valid_ids = create_data_matrix(1500, 5000, TRAIN_DIR)
 
-        X_train = getFeatures("../features/SCfeatures_train.csv",0,1499,0,120)
-        X_valid = getFeatures("../features/SCfeatures_train.csv",1500,5000,0,120)
-        t_train = np.array(getFeatures("../features/SCfeatures_train.csv",0,1499,120,121)).T[0]
-        t_valid = np.array(getFeatures("../features/SCfeatures_train.csv",1500,5000,120,121)).T[0]
+        X_train = getFeatures("../features2/TEST_train.csv",0,1499,0,500)
+        X_valid = getFeatures("../features2/TEST_train.csv",1500,5000,0,500)
+        #t_train = np.array(getFeatures("../features/SCfeatures_train.csv",0,1499,120,121)).T[0]
+        #t_valid = np.array(getFeatures("../features/SCfeatures_train.csv",1500,5000,120,121)).T[0]
 
-        print 'Data matrix (training set):'
-        print X_train.shape
-        print 'Classes (training set):'
-        print t_train.shape
+        #print 'Data matrix (training set):'
+        #print X_train.shape
+        #print 'Classes (training set):'
+        #print t_train.shape
 
         import models
         models.EXRT(X_train,t_train,X_valid,t_valid,False)
 
     if predict:
-        print
-        #X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
-        #X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
+        X_train, t_train, train_ids = create_data_matrix(0, 5000, TRAIN_DIR)
+        X_test, t_test, test_ids = create_data_matrix(0, 5000, TEST_DIR)
 
-        t_train = getFeatures("../features/t_train.csv",0,5000,0,1)
-        X_train = getFeatures("../features/X_train.csv",0,5000,0,120)
-        X_test = getFeatures("../features/X_test.csv",0,5000,0,120)
-        test_ids = np.array(getFeatures("../features/test_ids.csv",0,5000,0,1)).T[0]
-
+        X_train = getFeatures("../features2/TEST_train.csv",0,5000,0,500)
+        X_test = getFeatures("../features2/TEST_test.csv",0,5000,0,500)
+        
         print 'Data matrix (training set):'
         print X_train.shape
         print t_train.shape
         print X_test.shape
-        print test_ids.shape
+        #print test_ids.shape
         #print 'Classes (training set):'
         #print t_train.shape
 

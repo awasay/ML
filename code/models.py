@@ -2,6 +2,9 @@ from sklearn import linear_model
 from sklearn.svm import SVC
 from sknn.mlp import Classifier, Layer
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn import ensemble
+
 import numpy as np
 import csv
 
@@ -52,7 +55,7 @@ def LogReg(X_train,t_train,x,t,predict):
 
 def LSVM(X_train,t_train,x,t,predict):
 
-	svc = SVC(kernel="linear")
+	svc = SVC(gamma=3,C=1)
 
 
 	svc.fit(X_train, t_train)
@@ -66,9 +69,33 @@ def LSVM(X_train,t_train,x,t,predict):
 ## Neural Network
 
 def EXRT(X_train,t_train,x,t,predict):
+	for i in [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]:	
+		clf = ExtraTreesClassifier(n_estimators=500, max_depth=None, max_features=i)
 
-	clf = ExtraTreesClassifier(n_estimators=500, max_depth=None)
+		clf.fit(X_train, t_train)
+		prediction = clf.predict(x)
+		if predict:
+			write_predictions(t,prediction)
+		else:
+			get_accuracy(prediction,t)
 
+def gb(X_train,t_train,x,t,predict):
+
+	for i in [10]:
+		params = {'n_estimators': 500, 'learning_rate': 0.01, "max_features":i}
+		clf = ensemble.GradientBoostingClassifier(**params)
+		
+		clf.fit(X_train, t_train)
+		prediction = clf.predict(x)
+		print i
+		if predict:
+			write_predictions(t,prediction)
+		else:
+			get_accuracy(prediction,t)
+
+
+def adaboost(X_train,t_train,x,t,predict):
+	clf = AdaBoostClassifier()
 	clf.fit(X_train, t_train)
 	prediction = clf.predict(x)
 
